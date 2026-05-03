@@ -1,116 +1,186 @@
-# Tutor Académico de Inglés con IA (RAG)
+Tutor Académico de Inglés con IA (RAG)
+Descripción del Proyecto
 
-## Descripción del Proyecto
+Este proyecto consiste en el desarrollo de un asistente experto basado en inteligencia artificial que funciona como un Tutor Académico de Inglés.
 
-Este proyecto consiste en el desarrollo de un **asistente experto basado en inteligencia artificial** que funciona como un **Tutor Académico de Inglés**.
+El sistema permite ayudar a estudiantes en el aprendizaje del idioma inglés mediante:
 
-El sistema está diseñado para responder preguntas relacionadas con el aprendizaje del idioma inglés, como:
+explicación de gramática
+enseñanza de vocabulario
+corrección de oraciones
+traducción de frases
 
-- gramática
-- vocabulario
-- corrección de oraciones
-- traducción de frases
+El asistente utiliza técnicas de:
 
-El asistente utiliza técnicas de **Prompt Engineering**, **Few-Shot Prompting** y **RAG (Retrieval Augmented Generation)** para generar respuestas educativas.
+Prompt Engineering
+Few-Shot Prompting
+RAG (Retrieval Augmented Generation)
 
-Además, el sistema funciona de manera local utilizando Python.
+y funciona de manera local utilizando Python.
 
----
+Objetivo
 
-# Objetivo
+Desarrollar un tutor académico inteligente capaz de:
 
-Crear un tutor académico inteligente que pueda:
+responder preguntas sobre inglés
+explicar conceptos de forma clara
+corregir errores en oraciones
+proporcionar ejemplos prácticos
+restringir respuestas fuera del contexto educativo
+Tecnologías Utilizadas
+Python
+API de Gemini
+Visual Studio Code
+GitHub
+LangChain
+FAISS
+Sentence Transformers
+Arquitectura del Sistema
 
-- responder preguntas de inglés
-- explicar conceptos de gramática
-- corregir frases
-- proporcionar ejemplos
-- rechazar preguntas fuera del contexto educativo
+El sistema está compuesto por varios componentes clave:
 
----
+🔹 1. System Prompt
 
-# Tecnologías Utilizadas
+Define el comportamiento del asistente como un Tutor Académico de Inglés.
 
-- Python
-- API de Gemini
-- Visual Studio Code
-- GitHub
-- Prompt Engineering
+Incluye:
 
----
+instrucciones claras
+funciones del tutor
+reglas de comportamiento
 
-# Arquitectura del Sistema
+Ejemplo de regla:
 
-El sistema está compuesto por tres partes principales:
+"Lo siento, soy tu tutor de inglés. Sigamos aprendiendo."
 
-### 1. System Prompt
+🔹 2. Few-Shot Prompting
 
-Define el comportamiento del asistente.
+Se incluyen ejemplos dentro del prompt para guiar al modelo.
 
-El modelo se configura como un **Tutor Académico de Inglés** que:
+Formato de respuesta esperado:
 
-- explica conceptos
-- da ejemplos
-- traduce frases
-- corrige errores
+Explicación
+Ejemplo
+Traducción
 
-También se establecen reglas para evitar responder preguntas fuera del tema.
+Esto permite mantener consistencia en las respuestas.
 
-Ejemplo:
+🔹 3. Delimitadores
 
-> "Lo siento, soy tu tutor de inglés. Sigamos aprendiendo."
----
+Se utilizan triple comillas (""") para separar:
 
-### 2. Few-Shot Prompting
+instrucciones del sistema
+contexto de conocimiento
 
-Se incluyen ejemplos dentro del prompt para enseñarle al modelo **cómo debe responder**.
+Esto mejora la comprensión del modelo.
 
-Ejemplo:
+4. Implementación de RAG (Avance 2)
 
-Pregunta:
+En esta fase se implementó un sistema RAG dinámico, que permite recuperar información relevante antes de generar una respuesta.
 
-Respuesta esperada:
+🔄 Flujo del sistema RAG
 
-- Explicación
-- Ejemplo
-- Traducción
+El sistema funciona de la siguiente manera:
 
-Esto ayuda al modelo a mantener un formato consistente en las respuestas.
+Se carga el archivo conocimiento.txt
+El texto se divide en fragmentos (chunks)
+Cada fragmento se convierte en un vector (embedding)
+Los vectores se almacenan en una base vectorial (FAISS)
+El usuario realiza una pregunta
+El sistema busca los fragmentos más relevantes
+Se construye un contexto dinámico
+El contexto se envía al modelo
+El modelo genera la respuesta
+Chunking (división del texto)
 
----
+El documento se divide en fragmentos para mejorar la búsqueda:
 
-### 3. Delimitadores
+CharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50
+)
 
-Se utilizan **triple comillas (`"""`)** para separar el contexto del conocimiento de las instrucciones del sistema.
+Esto permite trabajar con partes más pequeñas del conocimiento.
 
-Esto ayuda a que el modelo entienda claramente qué parte corresponde al contexto educativo.
+Embeddings
 
----
+Cada fragmento se convierte en un vector numérico usando:
 
-### 4. RAG (Retrieval Augmented Generation)
+sentence-transformers/all-MiniLM-L6-v2
 
-El sistema utiliza un archivo de conocimiento (`conocimiento.txt`) que contiene información sobre inglés.
+Esto permite realizar búsqueda semántica (por significado, no por palabras exactas).
 
-Este contenido se incluye dentro del prompt para que el modelo pueda utilizarlo al generar respuestas.
+Base Vectorial (FAISS)
 
-Esto permite que el tutor responda basándose en un **material específico de estudio**.
+Los embeddings se almacenan en una base vectorial:
 
----
+FAISS.from_documents(docs, embeddings)
 
-# Funcionalidades
+Esto permite encontrar rápidamente los fragmentos más relevantes.
+
+Búsqueda Semántica
+
+Cuando el usuario hace una pregunta:
+
+similarity_search(pregunta, k=2)
+
+El sistema recupera los fragmentos más relacionados.
+
+ Integración con el modelo
+
+El contexto recuperado se inserta en el prompt:
+
+contexto = obtener_contexto(pregunta)
+
+Esto permite que el modelo responda usando información específica.
+
+ Funcionalidades
 
 El asistente puede:
 
-- explicar gramática
-- enseñar vocabulario
-- traducir frases
-- corregir oraciones
-- dar ejemplos
-- mantener un historial de conversación
+explicar gramática
+enseñar vocabulario
+traducir frases
+corregir oraciones
+dar ejemplos
+usar contexto dinámico (RAG)
+mantener historial de conversación
+ Ejecución del sistema
 
-La conversación termina cuando el estudiante escribe:
+El sistema se ejecuta desde la terminal:
+
+python Proyecto.py
+
+Ejemplo:
+
+Estudiante: what is the verb to be
+
+Tutor:
+Explicación:
+...
+ Historial de conversación
+
+La conversación finaliza cuando el usuario escribe:
+
 salir
 
-En ese momento se muestra el **historial completo de la conversación**.
+Al finalizar, se muestra el historial completo de la interacción.
 
+ Resultados
 
+El uso de RAG permite:
+
+respuestas más precisas
+uso de conocimiento específico
+mejor comprensión del contexto
+ Conclusión
+
+El proyecto demuestra cómo integrar técnicas de:
+
+Prompt Engineering
+Few-Shot Prompting
+RAG
+
+para construir un asistente académico inteligente.
+
+El uso de una base vectorial permite mejorar significativamente la calidad de las respuestas, al proporcionar contexto relevante al modelo.
